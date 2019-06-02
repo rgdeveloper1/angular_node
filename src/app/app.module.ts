@@ -3,18 +3,32 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { ProductsListComponent } from './products-list/products-list.component';
+import { LoaderComponent } from './loader/loader.component';
+import { LoderService } from './loader/loder.service';
+import { Interceptor } from './loader/interceptors';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ProductsListComponent,
+    LoaderComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
-  providers: [],
+  providers: [LoderService,  
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: Interceptor,
+      multi: true
+    },],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

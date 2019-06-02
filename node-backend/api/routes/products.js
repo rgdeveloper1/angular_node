@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-
+const multer =  require('multer');
+// const upload = multer({dest: '../../'});
 const Product = require('../../models/products');
 
 router.get('/', (req, res, next) => {
@@ -95,13 +96,17 @@ router.patch('/:productId', (req, res, nex) => {
     const id = req.params.productId;
     const udpateOpp = {};
     for (const ops of req.body) {
-        udpateOpp[ops.propName] = ops.value;
+        udpateOpp[ops.productCategory] = ops.value;
     }
     Product.update({ _id: id }, { $set: udpateOpp })
         .exec()
         .then(result => {
             console.log('Update', result);
-            res.status(200).json(result);
+            res.status(200).json({
+                result: result,
+                message: 'Product Update Successfully !!'
+            });
+
         })
         .catch(err => {
             console.log(err);

@@ -6,16 +6,16 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent  {
   title = 'angular-node';
-  apiPath = "http://localhost:3000/products/";
+  // apiPath = "http://localhost:3000/products/";
 
-  constructor(private http:HttpClient){}
-  ngOnInit(){
-    this.http.get(this.apiPath).subscribe(
-      (res)=>{
-        console.log(res);
-      }
-    )
-  }
+  // constructor(private http:HttpClient){}
+  // ngOnInit(){
+  //   this.http.get(this.apiPath).subscribe(
+  //     (res)=>{
+  //       console.log(res);
+  //     }
+  //   )
+  // }
 }
