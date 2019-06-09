@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormBuilder, FormGroup, NgForm, Validators, NG_ASYNC_VALIDATORS } from '@angular/forms';
 import { Router, ActivatedRoute, Event } from '@angular/router';
 import { mimevalidators } from './mime-type.validator';
+import { AuthService } from '../service/auth-service.service';
 
 @Component({
   selector: 'app-products-list',
@@ -14,13 +15,13 @@ export class ProductsListComponent implements OnInit {
   apiPath = "http://localhost:3000/products/";
   getproductData;
   productDataId;
-  mode = 'Create';
   buttontext = 'Create'
 
   constructor(private http: HttpClient,
     private fb: FormBuilder,
     private router: Router,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    public authService: AuthService) { }
   ngOnInit() {
     this.getData();
     this.createForm();
@@ -35,7 +36,6 @@ export class ProductsListComponent implements OnInit {
         if (id) {
           console.log(id)
           this.getDataById(id);
-          this.mode = 'Edit';
           this.buttontext = 'Update'
         }
       }
@@ -47,15 +47,15 @@ export class ProductsListComponent implements OnInit {
     this.productForm = this.fb.group({
       productname: [null, [Validators.required]],
       price: [null, Validators.required],
-      productimage: [null, [Validators.required, mimevalidators.validatorss]]
+      productimage: [null, [Validators.required,]]
     })
   }
 
   // Add and Update Product
   addProduct(form: NgForm) {
-    if (this.productForm.invalid) {
-      return;
-    }
+    // if (this.productForm.invalid) {
+    //   return;
+    // }
     if (this.productDataId) {
       const requestBody = [
         {
@@ -80,11 +80,20 @@ export class ProductsListComponent implements OnInit {
       )
     }
     else {
+      // let httpOptions2 = {
+      //   headers: new HttpHeaders({
+      //     "Content-Type": "application/jsons",
+      //     FROM_DATE: "01/MAY/2014",
+      //   })
+      // };
       const createBody = {
         'name': this.productForm.get('productname').value,
-        'price': this.productForm.get('price').value
+        'price': this.productForm.get('price').value,
+        productimage: [null, [Validators.required, mimevalidators.validatorss]]
+        // 'productimage': new FormData().append('file',this.productForm.get('productimage').value)
       }
-      this.http.post(this.apiPath, createBody).subscribe(
+     
+      this.http.post(this.apiPath, createBody ).subscribe(
         (res) => {
           console.log(res);
           this.getData();
@@ -94,6 +103,7 @@ export class ProductsListComponent implements OnInit {
       console.log(form.value)
     }
   }
+
 
   // Delete Product
   delete(id) {
@@ -121,7 +131,6 @@ export class ProductsListComponent implements OnInit {
     this.productForm.patchValue({
       productname: productData.name,
       price: productData.price
-
     })
   }
 
@@ -134,6 +143,7 @@ export class ProductsListComponent implements OnInit {
       }
     );
   }
+  
   image_preview: any;
   onImagePicked(event) {
     const file = event.target.files[0];

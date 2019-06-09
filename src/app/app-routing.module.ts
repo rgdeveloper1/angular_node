@@ -1,16 +1,27 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ProductsListComponent } from './products-list/products-list.component';
+import { LoginComponent } from './login/login.component';
+import { RegistrationComponent } from './registration/registration.component';
+import { RouteGuard } from './service/route.guard';
 
 const routes: Routes = [
   {
-    path: 'product', component: ProductsListComponent
+    path: 'login', component: LoginComponent
   },
   {
-    path: '', redirectTo: '/product', pathMatch:'full'
+    path: 'register', component: RegistrationComponent
   },
   {
-    path: 'product/edit/:id', component: ProductsListComponent
+    path: 'product', component: ProductsListComponent,
+    canActivate: [RouteGuard]
+  },
+  {
+    path: '', redirectTo: '/login', pathMatch:'full'
+  },
+  {
+    path: 'product/edit/:id', component: ProductsListComponent,
+        canActivate: [RouteGuard]
   },
 ];
 

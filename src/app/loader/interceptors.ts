@@ -16,7 +16,7 @@ export class Interceptor implements HttpInterceptor {
       this.spinnerService.show();
     return next.handle(req).pipe(tap(
             (event: HttpEvent<any>) => {
-              if (event instanceof HttpResponse) {
+              if (event instanceof HttpResponse || event instanceof HttpErrorResponse) {
                 this.spinnerService.hide();
               }
             },

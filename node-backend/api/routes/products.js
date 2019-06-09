@@ -1,28 +1,43 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const multer =  require('multer');
-// const upload = multer({dest: '../../'});
+
+const checkAuth = require('../middleware/check-auth');
+
+const multer = require('multer');
+
 const Product = require('../../models/products');
 
-router.get('/', (req, res, next) => {
+const storages = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'images/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${new Date().toISOString().replace(/:/g, '-')}${file.originalname}`);
+    }
+});
+const uploads = multer({ 
+   storage: storages
+ });
+
+router.get('/', checkAuth,  (req, res, next) => {
     Product.find()
         .select('name price _id')
         .exec()
         .then(result => {
-            console.log(result);
+            // console.log(result);
             const response = {
                 count: result.length,
                 products: result.map(
-                    (doc) =>{
+                    (doc) => {
                         return {
-                             name: doc.name,
-                             price: doc.price,
-                             _id: doc._id,
-                             request: {
-                                 type: 'GET',
-                                 url: 'http://localhost:3000/products/' + doc._id
-                             }
+                            name: doc.name,
+                            price: doc.price,
+                            _id: doc._id,
+                            request: {
+                                type: 'GET',
+                                url: 'http://localhost:3000/products/' + doc._id
+                            }
                         };
                     }
                 )
@@ -37,11 +52,13 @@ router.get('/', (req, res, next) => {
         });
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', checkAuth,  (req, res, next) => {
+     console.log(req.file);
     const product = new Product({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
-        price: req.body.price
+        price: req.body.price,
+        // productImage: req.file.path
     });
 
     product.save()
@@ -53,6 +70,7 @@ router.post('/', (req, res, next) => {
                     name: result.name,
                     price: result.price,
                     _id: result._id,
+                    // productImage: result.productImage,
                     resquest: {
                         type: 'GET',
                         url: 'http://localhost:3000/products/' + result._id
@@ -68,7 +86,7 @@ router.post('/', (req, res, next) => {
         });
 });
 
-router.get('/:productId', (req, res, nex) => {
+router.get('/:productId', checkAuth ,(req, res, nex) => {
     const id = req.params.productId;
 
     Product.findById(id)
@@ -116,7 +134,7 @@ router.patch('/:productId', (req, res, nex) => {
         });
 });
 
-router.delete('/:productId', (req, res, nex) => {
+router.delete('/:productId', checkAuth, (req, res, nex) => {
     const id = req.params.productId;
     Product.remove({ _id: id })
         .exec()
@@ -131,7 +149,5 @@ router.delete('/:productId', (req, res, nex) => {
             });
         });
 });
-
-
 
 module.exports = router;

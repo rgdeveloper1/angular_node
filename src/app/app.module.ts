@@ -9,12 +9,20 @@ import { ProductsListComponent } from './products-list/products-list.component';
 import { LoaderComponent } from './loader/loader.component';
 import { LoderService } from './loader/loder.service';
 import { Interceptor } from './loader/interceptors';
+import { LoginComponent } from './login/login.component';
+import { RegistrationComponent } from './registration/registration.component';
+import { AuthService } from './service/auth-service.service';
+import { AuthInterceptor } from './service/auth-interceptor';
+import { DataService } from './service/data.service';
+import { RouteGuard } from './service/route.guard';
 
 @NgModule({
   declarations: [
     AppComponent,
     ProductsListComponent,
-    LoaderComponent
+    LoaderComponent,
+    LoginComponent,
+    RegistrationComponent
   ],
   imports: [
     BrowserModule,
@@ -23,12 +31,20 @@ import { Interceptor } from './loader/interceptors';
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [LoderService,  
+  providers: [LoderService, AuthService,
+    DataService, 
     {
       provide: HTTP_INTERCEPTORS,
       useClass: Interceptor,
       multi: true
-    },],
+    }, 
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    },
+    RouteGuard
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

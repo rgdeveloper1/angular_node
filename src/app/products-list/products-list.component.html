@@ -11,10 +11,11 @@
       <input type="text" formControlName="price" class="form-control" id="price" placeholder="price">
     </div>
     <div class="form-group">
-      <button class="btn btn-primary" type="button" (click)="product_image.click()">Image Upload</button>
+      <!-- <button class="btn btn-primary" type="button" (click)="product_image.click()">Image Upload</button> -->
       <input type="file" class="form-control-file" (change)="onImagePicked($event)" #product_image>
     </div>
-    <div class="form-group image_preview" *ngIf="image_preview != '' && image_preview && productForm.get('productimage').valid">
+    <div class="form-group image_preview"
+      *ngIf="image_preview != '' && image_preview && productForm.get('productimage').valid">
       <img [src]="image_preview" alt="">
     </div>
     <button type="submit" class="btn btn-primary">{{buttontext}}</button>
@@ -31,8 +32,12 @@
           <h5 class="card-title">{{product.name}}</h5>
           <p class="card-text">{{product.price}}</p>
           <button class="btn btn-primary" [routerLink]="['/product/edit',product._id ]"
-            routerLinkActive="router-link-active">Edit</button>
-          <button class="btn btn-danger" (click)="delete(product._id)">Delete</button>
+              routerLinkActive="router-link-active">Edit</button>
+          <div *ngIf="authService.loggedIn()">
+            
+            <button class="btn btn-danger" (click)="delete(product._id)">Delete</button>
+            <button class="btn btn-primary">Buy</button>
+          </div>
         </div>
       </div>
     </div>
@@ -40,5 +45,3 @@
 </div>
 
 <br><br>
-
-<app-loader></app-loader>
